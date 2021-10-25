@@ -13,7 +13,7 @@ provider "kubernetes" {
   experiments {
     manifest_resource = true
   }
-  config_path = "~/.kube/config"
+  config_path = "kube_config.yml"
 }
 
 resource "kubernetes_namespace" "ucl-aa-namespace" {
