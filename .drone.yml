@@ -5,6 +5,9 @@ name: plan
 steps:
   - name: plan
     image: hashicorp/terraform:light
+    volumes:
+      - name: cache
+        path: /dist
     environment:
       KUBE_CLUSTER_CERT:
         from_secret: KUBE_CLUSTER_CERT
@@ -17,7 +20,28 @@ steps:
       - sed -i "s/KUBE_CLIENT_CERT/$KUBE_CLIENT_CERT/g" kube_config.yml
       - sed -i "s/KUBE_CLIENT_KEY/$KUBE_CLIENT_KEY/g" kube_config.yml
       - terraform init -input=false
-      - terraform plan -out tfapply
+      - terraform plan -out /dist/tfapply
+
+  - name: publish-plan
+    image: minio/mc:RELEASE.2021-10-07T04-19-58Z
+    privileged: true
+    volumes:
+      - name: cache
+        path: /dist
+    environment:
+      S3_ACCESS_KEY:
+        from_secret: S3_ACCESS_KEY
+      S3_SECRET:
+        from_secret: S3_SECRET
+      S3_ENDPOINT: "https://bucket.seen.wtf"
+    commands:
+      - mc alias set s3 $S3_ENDPOINT $S3_ACCESS_KEY $S3_SECRET --api S3v4
+      - mc cp /dist/tfapply s3/ucl-aa/tfapply
+
+volumes:
+  - name: cache
+    temp:
+      medium: memory
 
 trigger:
   branch:
@@ -32,8 +56,27 @@ type: kubernetes
 name: deploy
 
 steps:
-  - name: plan
+  - name: pull-plan
+    image: minio/mc:RELEASE.2021-10-07T04-19-58Z
+    privileged: true
+    volumes:
+      - name: cache
+        path: /dist
+    environment:
+      S3_ACCESS_KEY:
+        from_secret: S3_ACCESS_KEY
+      S3_SECRET:
+        from_secret: S3_SECRET
+      S3_ENDPOINT: "https://bucket.seen.wtf"
+    commands:
+      - mc alias set s3 $S3_ENDPOINT $S3_ACCESS_KEY $S3_SECRET --api S3v4
+      - mc cp /dist/tfapply s3/ucl-aa/tfapply
+
+  - name: apply
     image: hashicorp/terraform:light
+    volumes:
+      - name: cache
+        path: /dist
     environment:
       KUBE_CLUSTER_CERT:
         from_secret: KUBE_CLUSTER_CERT
@@ -46,7 +89,12 @@ steps:
       - sed -i "s/KUBE_CLIENT_CERT/$KUBE_CLIENT_CERT/g" kube_config.yml
       - sed -i "s/KUBE_CLIENT_KEY/$KUBE_CLIENT_KEY/g" kube_config.yml
       - terraform init -input=false
-      - terraform apply -auto-approve tfapply
+      - terraform apply -auto-approve /dist/tfapply
+
+volumes:
+  - name: cache
+    temp:
+      medium: memory
 
 trigger:
   target:
