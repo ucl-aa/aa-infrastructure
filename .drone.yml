@@ -1,6 +1,6 @@
 kind: pipeline
 type: kubernetes
-name: default
+name: plan
 
 steps:
   - name: plan
@@ -29,7 +29,7 @@ trigger:
 ---
 kind: pipeline
 type: kubernetes
-name: default
+name: deploy
 
 steps:
   - name: plan
