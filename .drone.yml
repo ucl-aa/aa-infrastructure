@@ -9,6 +9,7 @@ steps:
       KUBE_CONFIG:
         from_secret: KUBE_CONFIG
     commands:
+      - mkdir -p ~/.kube/
       - echo $KUBE_CONFIG > ~/.kube/config
       - terraform init -input=false
       - terraform plan -out tfapply
