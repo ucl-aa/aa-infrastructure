@@ -1,0 +1,14 @@
+kind: pipeline
+type: kubernetes
+name: default
+
+steps:
+  - name: plan
+    image: hashicorp/terraform:light
+    environment:
+      KUBE_CONFIG:
+        from_secret: KUBE_CONFIG
+    commands:
+      - echo $KUBE_CONFIG > ~/.kube/config
+      - terraform init -input=false
+      - terraform plan -out tfapply
