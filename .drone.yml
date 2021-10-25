@@ -6,10 +6,15 @@ steps:
   - name: plan
     image: hashicorp/terraform:light
     environment:
-      KUBE_CONFIG:
-        from_secret: KUBE_CONFIG
+      KUBE_CLUSTER_CERT:
+        from_secret: KUBE_CLUSTER_CERT
+      KUBE_CLIENT_CERT:
+        from_secret: KUBE_CLIENT_CERT
+      KUBE_CLIENT_KEY:
+        from_secret: KUBE_CLIENT_KEY
     commands:
-      - mkdir -p ~/.kube/
-      - echo $KUBE_CONFIG > ~/.kube/config
+      - kubectl config set-cluster default --server=https://192.168.1.6:6443 --certificate-authority=$KUBE_CLUSTER_CERT
+      - kubectl config set-credentials default --client-certificate=$KUBE_CLIENT_CERT --client-key=$KUBE_CLIENT_KEY
+      - kubectl config set-context --current --cluster=default --user=default --namespace=default
       - terraform init -input=false
       - terraform plan -out tfapply
