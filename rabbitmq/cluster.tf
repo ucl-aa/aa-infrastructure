@@ -7,6 +7,28 @@ resource "kubernetes_manifest" "rabbitmq-cluster" {
       "namespace" = "ucl-aa",
     }
     "spec" = {
+      "override" = {
+        "statefulSet" = {
+          "spec" = {
+            "template" = {
+              "spec" = {
+                "topologySpreadConstraints" = [
+                  {
+                    "labelSelector" = {
+                      "matchLabels" = {
+                        "app.kubernetes.io/name" = "ucl-aa-rabbitmq-cluster"
+                      }
+                    }
+                    "maxSkew"           = 1
+                    "topologyKey"       = "topology.kubernetes.io/zone"
+                    "whenUnsatisfiable" = "DoNotSchedule"
+                  },
+                ]
+              }
+            }
+          }
+        }
+      }
       "persistence" = {
         "storage"          = "10Gi"
         "storageClassName" = "local-path"
