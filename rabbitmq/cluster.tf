@@ -46,7 +46,7 @@ resource "kubernetes_manifest" "rabbitmq-cluster" {
       "replicas" = 3
       "resources" = {
         "limits" = {
-          "cpu"    = 4
+          "cpu"    = 6
           "memory" = "10Gi"
         }
       }
