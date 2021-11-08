@@ -6,39 +6,39 @@ resource "kubernetes_manifest" "rabbitmq-cluster" {
       "name"      = "ucl-aa-rabbitmq-cluster",
       "namespace" = "ucl-aa",
     }
-    "spec" = {
-      "override" = {
-        "statefulSet" = {
-          "spec" = {
-            "template" = {
-              "spec" = {
-                "containers" = []
-              }
-            }
-          }
-        }
-      }
-      "persistence" = {
-        "storage"          = "10Gi"
-        "storageClassName" = "local-path"
-      }
-      #   "rabbitmq" = {
-      #     "additionalConfig" = <<-EOT
-      #         cluster_partition_handling = pause_minority
-      #         vm_memory_high_watermark_paging_ratio = 0.99
-      #         disk_free_limit.relative = 1.0
-      #         collect_statistics_interval = 10000
+    # "spec" = {
+    #   "override" = {
+    #     "statefulSet" = {
+    #       "spec" = {
+    #         "template" = {
+    #           "spec" = {
+    #             "containers" = []
+    #           }
+    #         }
+    #       }
+    #     }
+    #   }
+    #   "persistence" = {
+    #     "storage"          = "10Gi"
+    #     "storageClassName" = "local-path"
+    #   }
+    #   #   "rabbitmq" = {
+    #   #     "additionalConfig" = <<-EOT
+    #   #         cluster_partition_handling = pause_minority
+    #   #         vm_memory_high_watermark_paging_ratio = 0.99
+    #   #         disk_free_limit.relative = 1.0
+    #   #         collect_statistics_interval = 10000
 
-      #   EOT
-      #   }
-      "replicas" = 3
-      "resources" = {
-        "limits" = {
-          "cpu"    = 6
-          "memory" = "10Gi"
-        }
-      }
-    }
+    #   #   EOT
+    #   #   }
+    #   "replicas" = 3
+    #   "resources" = {
+    #     "limits" = {
+    #       "cpu"    = 6
+    #       "memory" = "10Gi"
+    #     }
+    #   }
+    # }
   }
 }
 
