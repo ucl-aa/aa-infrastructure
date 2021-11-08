@@ -47,7 +47,8 @@ resource "kubernetes_manifest" "rabbitmq-cluster-disruption-budget" {
     "apiVersion" = "policy/v1beta1"
     "kind"       = "PodDisruptionBudget"
     "metadata" = {
-      "name" = "ucl-aa-rabbitmq-cluster"
+      "name"      = "ucl-aa-rabbitmq-cluster"
+      "namespace" = "ucl-aa"
     }
     "spec" = {
       "maxUnavailable" = 1
