@@ -22,15 +22,15 @@ resource "kubernetes_manifest" "rabbitmq-cluster" {
         "storage"          = "10Gi"
         "storageClassName" = "local-path"
       }
-      "rabbitmq" = {
-        "additionalConfig" = <<-EOT
-            cluster_partition_handling = pause_minority
-            vm_memory_high_watermark_paging_ratio = 0.99
-            disk_free_limit.relative = 1.0
-            collect_statistics_interval = 10000
+      #   "rabbitmq" = {
+      #     "additionalConfig" = <<-EOT
+      #         cluster_partition_handling = pause_minority
+      #         vm_memory_high_watermark_paging_ratio = 0.99
+      #         disk_free_limit.relative = 1.0
+      #         collect_statistics_interval = 10000
 
-      EOT
-      }
+      #   EOT
+      #   }
       "replicas" = 3
       "resources" = {
         "limits" = {
