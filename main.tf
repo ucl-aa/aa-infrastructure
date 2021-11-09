@@ -28,3 +28,7 @@ module "webapp" {
   server_host = "aa.seen.wtf"
 }
 
+module "rabbitmq" {
+  source = "./rabbitmq"
+}
+
