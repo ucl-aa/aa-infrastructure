@@ -91,6 +91,13 @@ steps:
       - terraform init -input=false
       - terraform apply -auto-approve /dist/tfapply
 
+  - name: Run Load-Test
+    image : loadimpact/k6
+    ports :
+      - '6565:6565'
+    commands:
+      - docker run -i loadimpact/k6 run <loadscript.js
+
 volumes:
   - name: cache
     temp:
